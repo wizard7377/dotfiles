@@ -18,6 +18,7 @@ opt.splitright = true
 opt.laststatus = 3
 
 opt.swapfile = false 
+opt.completeopt = { 'menu', 'menuone', 'noinsert' }
 -- window specific
 
 
