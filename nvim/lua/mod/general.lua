@@ -1,8 +1,10 @@
 vim.g.mapleader = ','
 vim.keymap.set('n', ';f', [[:Telescope find_files<CR>]], {})
-vim.keymap.set('n', ';t', [[:Telescope <CR>]], {})
+vim.keymap.set('n', ';t', [[:Telescope<CR>]], {})
 
 local opt = vim.opt
+
+opt.mouse = ''
 
 opt.expandtab = false
 opt.softtabstop = 4

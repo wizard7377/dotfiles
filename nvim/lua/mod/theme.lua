@@ -1,10 +1,10 @@
-require('nightfox').init({
-	options = {
-		styles = {
-			comments = "italic",
-			functions = "italic,bold",
-		}
-	}
+require('nightfox').setup({
+    options = {}
 })
-
-vim.cmd [[colorscheme nightfox]]
+require('tokyonight').setup({
+    styles = {
+	comments = { italic = false },
+	keywords = { italic = false }
+    }
+})
+vim.cmd [[colorscheme carbonfox]]
