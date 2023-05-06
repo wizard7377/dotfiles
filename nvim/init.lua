@@ -1,6 +1,2 @@
-require('mod.treesitter')
-require('mod.general')
-require('mod.plugins')
-require('mod.theme')
-require('mod.lsp')
-require('mod.cmp')
+require('core')
+require('plugins')
