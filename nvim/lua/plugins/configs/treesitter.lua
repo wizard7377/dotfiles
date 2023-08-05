@@ -94,8 +94,12 @@ local M = {
 	opts = {
 		-- ensure_installed = parsers,
 		highlight = { enable = true, additional_vim_regex_highlighting = false },
-		indent = { enable = true }
-		-- TODO: Look at incremental selection and other options
+		indent = { enable = true },
+		incremental_selection = {
+			enable = true,
+			-- keymaps = { init_selection = '<leader>v', node_incremental = '<leader>s', scope_incremental = '<leader>z', node_decremental = '<leader>S', }
+			-- TODO: Find better keymaps
+		}
 	}
 }
 

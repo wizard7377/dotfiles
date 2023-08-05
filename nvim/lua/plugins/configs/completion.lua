@@ -1,53 +1,56 @@
-local has_words_before = function()
-	unpack = unpack or table.unpack
-	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
-end
-
 local M = {
 	{ 'hrsh7th/nvim-cmp', event = 'InsertEnter',
-		opts = function() 
+		opts = function()
 			local cmp = require('cmp')
 			local luasnip = require('luasnip')
 			local M = {}
 
-			M.view = { entries = 'custom', selection_order = 'near_cursor' }
+			M.view = { entries = { 'custom', } }
 
 			M.window = { completion = cmp.config.window.bordered(), documentation = cmp.config.window.bordered() }
 
-			M.formatting = { format = require('lspkind').cmp_format({ mode = 'symbol_text' }), }
+			M.formatting = {
+				format = require('lspkind').cmp_format({
+					mode = 'symbol_text', max_width = 150,
+					menu = {
+						luasnip = '[LuaSnip]',
+						nvim_lsp = '[LSP]',
+						nvim_lua = '[Lua]',
+						neorg = '[Neorg]',
+						buffer = '[Buffer]',
+						path = '[Path]',
+					}
+				}),
+			}
 
 			-- M.completion = { keyword_length = 2 }
 
-			M.experimental = { ghost_text = true }
+			M.experimental = { ghost_text = { hl_group = 'Comment' } }
+
+			M.snippet = { expand = function(args) luasnip.lsp_expand(args.body) end }
+
+			M.preselect = cmp.PreselectMode.None
 
 			M.mapping = cmp.mapping.preset.insert({
 				['<C-b>'] = cmp.mapping.scroll_docs(-4),
 				['<C-f>'] = cmp.mapping.scroll_docs(4),
 				['<C-Space>'] = cmp.mapping.complete(),
 				['<C-e>'] = cmp.mapping.abort(),
-				['<CR>'] = cmp.mapping.confirm({ select = true }),
-				['<S-CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true, }),
-				['<Tab>'] = cmp.mapping(function(fallback)
-					if cmp.visible() then cmp.select_next_item()
-					elseif luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump()
-					elseif has_words_before() then cmp.complete() 
-					else fallback() end
-				end, { 'i', 's' }),
-				['<S-Tab>'] = cmp.mapping(function(fallback)
-					if cmp.visible() then cmp.select_prev_item() elseif luasnip.jumpable(-1) then luasnip.jump(-1) else fallback() end
-				end, { 'i', 's' }),
+				['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true, }),
+				['<S-CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }),
+				['<M-k>'] = cmp.mapping(function() if luasnip.jumpable(1) then luasnip.jump(1) end end, { 'i', 's' }),
+				['<M-j>'] = cmp.mapping(function() if luasnip.jumpable(-1) then luasnip.jump(-1) end end, { 'i', 's' }),
+				['<M-l>'] = cmp.mapping(function() if luasnip.jumpable(1) then luasnip.jump(1) end end, { 'i', 's' }),
+				['<M-h>'] = cmp.mapping(function() if luasnip.jumpable(-1) then luasnip.jump(-1) end end, { 'i', 's' }),
+				['<Tab>'] = cmp.mapping(function(fallback) if cmp.visible() then cmp.select_next_item() else fallback() end end, { 'i', 's' }),
+				['<S-Tab>'] = cmp.mapping(function(fallback) if cmp.visible() then cmp.select_prev_item() else fallback() end end, { 'i', 's' }),
 			})
 
-			M.snippet = {
-				expand = function(args) luasnip.lsp_expand(args.body) end
-			}
-
 			M.sources = cmp.config.sources({
-				{ name = 'nvim_lua' },
-				{ name = 'nvim_lsp' },
-				{ name = 'nvim_lsp_signature_help' },
 				{ name = 'luasnip' },
+				{ name = 'nvim_lsp' },
+				{ name = 'nvim_lua' },
+				{ name = 'neorg' },
 				{ name = 'buffer' },
 				{ name = 'path' },
 			})
@@ -59,17 +62,16 @@ local M = {
 			'L3MON4D3/LuaSnip',
 			'onsails/lspkind.nvim',
 			'hrsh7th/cmp-nvim-lsp',
-			'/hrsh7th/cmp-nvim-lsp-signature-help',
 			'hrsh7th/cmp-buffer',
 			'hrsh7th/cmp-path',
 			'saadparwaiz1/cmp_luasnip',
 			'hrsh7th/cmp-nvim-lua',
 		},
-	}, 
+	},
 
 	{ 'windwp/nvim-autopairs',
-		config = function() 
-			require('nvim-autopairs').setup() 
+		config = function()
+			require('nvim-autopairs').setup()
 			local npairs = require'nvim-autopairs'
 			local cond = require('nvim-autopairs.conds')
 			local Rule   = require'nvim-autopairs.rule'
@@ -132,8 +134,8 @@ local M = {
 		end
 	},
 
-	{ 'L3MON4D3/LuaSnip', dependencies = { 'rafamadriz/friendly-snippets', }, 
-		opts = { history = true, delete_check_events = 'TextChanged', update_events = { 'TextChanged', 'TextChangedI' } }, 
+	{ 'L3MON4D3/LuaSnip', dependencies = { 'rafamadriz/friendly-snippets', },
+		opts = { history = true, delete_check_events = 'TextChanged', update_events = { 'TextChanged', 'TextChangedI' } },
 		config = function() require('luasnip.loaders.from_vscode').lazy_load() end, },
 }
 

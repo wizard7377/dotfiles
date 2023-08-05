@@ -1,9 +1,9 @@
 require('core.utils').ensure_lazy()
 
-local opts = { 
+local opts = {
 	defaults = { lazy = true, version = false },
 	install = { colorscheme = { 'catppuccin' } },
-	performance = { rtp = { disabled_plugins = { 
+	performance = { rtp = { disabled_plugins = {
 		'2html_plugin',
 		'tohtml',
 		'getscript',

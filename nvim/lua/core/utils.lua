@@ -15,4 +15,18 @@ M.ensure_lazy = function()
 	vim.opt.rtp:prepend(lazypath)
 end
 
+M.keymap_table = function(table, buf)
+	for _, map in ipairs(table) do
+		vim.keymap.set(map.mode or { 'n' }, map[1], map[2], { desc = map.desc, buffer = buf })
+	end
+end
+
+M.fn = function(module)
+	return function(name, ...) local args = select(1, ...) return function() require(module)[name](args) end end
+end
+
+M.surround = function (ldelim, str, rdelim)
+	return ldelim .. str .. rdelim
+end
+
 return M
